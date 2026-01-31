@@ -7,11 +7,13 @@ use App\Dto\Inputs\SignupDto;
 use App\Dto\Outputs\AuthResponseDto;
 use App\Dto\Outputs\UserDto;
 use App\Entity\User;
+use App\Entity\UserToken;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -59,16 +61,74 @@ final class AuthController extends AbstractController
             return $this->json(['error' => 'Invalid credentials'], 401);
         }
 
-        $token = $this->jwtManager->create($user);
+        $accessToken = $this->jwtManager->create($user);
+
+        $refreshTokenPlain = bin2hex(random_bytes(32));
+
+        $refreshToken = new UserToken();
+        $refreshToken->setUser($user)
+            ->setToken(hash('sha256', $refreshTokenPlain))
+            ->setExpiresAt(new \DateTimeImmutable('+30 days'));
+
+        $this->em->persist($refreshToken);
+        $this->em->flush();
 
         $userDto = UserDto::fromEntity($user);
 
         $responseDto = new AuthResponseDto(
-            $token,
-            null, // TODO: refreshToken
+            $accessToken,
+            $refreshTokenPlain,
             $userDto
         );
 
         return $this->json($responseDto, 200);
+    }
+
+    /** REFRESH **/
+    #[Route('/refresh', name: 'auth_refresh', methods: ['GET'])]
+    public function refresh(Request $request): JsonResponse
+    {
+        $tokenPlain = $request->headers->get('X-Refresh-Token');
+
+        if (!$tokenPlain) {
+            return $this->json(['error' => 'Refresh token required'], 400);
+        }
+
+        $tokenHashed = hash('sha256', $tokenPlain);
+
+        $oldRefreshToken = $this->em->getRepository(UserToken::class)
+                                    ->findOneBy(['token' => $tokenHashed]);
+
+        if (!$oldRefreshToken) {
+            return $this->json(['error' => 'Invalid refresh token'], 401);
+        }
+
+        if ($oldRefreshToken->isExpired()) {
+            return $this->json(['error' => 'Refresh token expired'], 403);
+        }
+
+        $user = $oldRefreshToken->getUser();
+
+        $this->em->remove($oldRefreshToken);
+
+        // rotation du refreshToken
+        $newRefreshTokenPlain = bin2hex(random_bytes(32));
+        $newRefreshToken = new UserToken();
+        $newRefreshToken->setUser($user)
+            ->setToken(hash('sha256', $newRefreshTokenPlain))
+            ->setExpiresAt(new \DateTimeImmutable('+30 days'));
+
+        $this->em->persist($newRefreshToken);
+        $this->em->flush();
+
+        $accessToken = $this->jwtManager->create($user);
+
+        $responseDto = new AuthResponseDto(
+            $accessToken,
+            $newRefreshTokenPlain,
+            UserDto::fromEntity($user)
+        );
+
+        return $this->json($responseDto);
     }
 }

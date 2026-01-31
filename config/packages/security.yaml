@@ -30,7 +30,9 @@ security:
     # Note: Only the *first* matching rule is applied
     access_control:
         # Routes publiques
-        - { path: ^/auth/(signup|signin), roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/auth/signup$, roles: PUBLIC_ACCESS }
+        - { path: ^/auth/signin$, roles: PUBLIC_ACCESS }
+        - { path: ^/auth/refresh$, roles: PUBLIC_ACCESS }
 
         # Toutes les autres routes sont protégées
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
