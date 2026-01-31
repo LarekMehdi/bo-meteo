@@ -131,4 +131,24 @@ final class AuthController extends AbstractController
 
         return $this->json($responseDto);
     }
+
+    /** LOGOUT **/
+    #[Route('/logout', name: 'auth_logout', methods: ['DELETE'])]
+    public function logout(Request $request): JsonResponse
+    {
+        $tokenPlain = $request->headers->get('X-Refresh-Token');
+
+        if ($tokenPlain) {
+            $tokenHashed = hash('sha256', $tokenPlain);
+            $refreshToken = $this->em->getRepository(UserToken::class)
+                                     ->findOneBy(['token' => $tokenHashed]);
+
+            if ($refreshToken) {
+                $this->em->remove($refreshToken);
+                $this->em->flush();
+            }
+        }
+
+        return $this->json(['message' => 'Logged out'], 200);
+    }
 }
