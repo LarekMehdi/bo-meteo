@@ -16,9 +16,9 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 final class AuthService
 {
     public function __construct(
-        private EntityManagerInterface $em,
-        private UserRepository $userRepository,
-        private UserPasswordHasherInterface $passwordHasher,
+        private readonly EntityManagerInterface $em,
+        private readonly UserRepository $userRepository,
+        private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly JWTTokenManagerInterface $jwtManager,
     ) {
     }
