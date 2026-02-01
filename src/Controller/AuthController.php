@@ -4,85 +4,44 @@ namespace App\Controller;
 
 use App\Dto\Inputs\SigninDto;
 use App\Dto\Inputs\SignupDto;
-use App\Dto\Outputs\AuthResponseDto;
-use App\Dto\Outputs\UserDto;
-use App\Entity\User;
-use App\Entity\UserToken;
-use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use App\Service\AuthService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/auth')]
 final class AuthController extends AbstractController
 {
     public function __construct(
-        private readonly UserRepository $userRepository,
-        private readonly UserPasswordHasherInterface $passwordHasher,
-        private readonly JWTTokenManagerInterface $jwtManager,
-        private readonly EntityManagerInterface $em,
+        private readonly AuthService $authService,
     ) {
     }
 
-    // TODO: AuthService
     /** SIGNUP **/
     #[Route('/signup', name: 'auth_signup', methods: ['POST'])]
     public function signup(SignupDto $dto): JsonResponse
     {
-        if ($this->userRepository->findOneBy(['email' => $dto->getEmail()])) {
-            return $this->json(['error' => 'Email already used'], 409);
+        try {
+            $userDto = $this->authService->signup($dto);
+
+            return $this->json($userDto, 201);
+        } catch (\DomainException $e) {
+            return $this->json(['error' => $e->getMessage()], 409);
         }
-
-        $user = new User();
-        $user->setEmail($dto->getEmail())
-             ->setFirstname($dto->getFirstname())
-             ->setLastname($dto->getLastname())
-             ->setPassword(
-                 $this->passwordHasher->hashPassword($user, $dto->getPassword())
-             );
-
-        $this->em->persist($user);
-        $this->em->flush();
-
-        $responseDto = UserDto::fromEntity($user);
-
-        return $this->json($responseDto, 201);
     }
 
     /** SIGNIN **/
     #[Route('/signin', name: 'auth_signin', methods: ['POST'])]
     public function signin(SigninDto $dto): JsonResponse
     {
-        $user = $this->userRepository->findOneBy(['email' => $dto->getEmail()]);
-        if (!$user || !$this->passwordHasher->isPasswordValid($user, $dto->getPassword())) {
-            return $this->json(['error' => 'Invalid credentials'], 401);
+        try {
+            $responseDto = $this->authService->signin($dto);
+
+            return $this->json($responseDto, 200);
+        } catch (\DomainException $e) {
+            return $this->json(['error' => $e->getMessage()], 401);
         }
-
-        $accessToken = $this->jwtManager->create($user);
-
-        $refreshTokenPlain = bin2hex(random_bytes(32));
-
-        $refreshToken = new UserToken();
-        $refreshToken->setUser($user)
-            ->setToken(hash('sha256', $refreshTokenPlain))
-            ->setExpiresAt(new \DateTimeImmutable('+30 days'));
-
-        $this->em->persist($refreshToken);
-        $this->em->flush();
-
-        $userDto = UserDto::fromEntity($user);
-
-        $responseDto = new AuthResponseDto(
-            $accessToken,
-            $refreshTokenPlain,
-            $userDto
-        );
-
-        return $this->json($responseDto, 200);
     }
 
     /** REFRESH **/
@@ -91,46 +50,22 @@ final class AuthController extends AbstractController
     {
         $tokenPlain = $request->headers->get('X-Refresh-Token');
 
-        if (!$tokenPlain) {
-            return $this->json(['error' => 'Refresh token required'], 400);
+        try {
+            $responseDto = $this->authService->refresh($tokenPlain);
+
+            return $this->json($responseDto, 200);
+        } catch (\DomainException $e) {
+            $message = $e->getMessage();
+
+            $status = match ($message) {
+                'Refresh token required' => 400,
+                'Invalid refresh token' => 401,
+                'Refresh token expired' => 403,
+                default => 500,
+            };
+
+            return $this->json(['error' => $message], $status);
         }
-
-        $tokenHashed = hash('sha256', $tokenPlain);
-
-        $oldRefreshToken = $this->em->getRepository(UserToken::class)
-                                    ->findOneBy(['token' => $tokenHashed]);
-
-        if (!$oldRefreshToken) {
-            return $this->json(['error' => 'Invalid refresh token'], 401);
-        }
-
-        if ($oldRefreshToken->isExpired()) {
-            return $this->json(['error' => 'Refresh token expired'], 403);
-        }
-
-        $user = $oldRefreshToken->getUser();
-
-        $this->em->remove($oldRefreshToken);
-
-        // rotation du refreshToken
-        $newRefreshTokenPlain = bin2hex(random_bytes(32));
-        $newRefreshToken = new UserToken();
-        $newRefreshToken->setUser($user)
-            ->setToken(hash('sha256', $newRefreshTokenPlain))
-            ->setExpiresAt(new \DateTimeImmutable('+30 days'));
-
-        $this->em->persist($newRefreshToken);
-        $this->em->flush();
-
-        $accessToken = $this->jwtManager->create($user);
-
-        $responseDto = new AuthResponseDto(
-            $accessToken,
-            $newRefreshTokenPlain,
-            UserDto::fromEntity($user)
-        );
-
-        return $this->json($responseDto);
     }
 
     /** LOGOUT **/
@@ -139,16 +74,7 @@ final class AuthController extends AbstractController
     {
         $tokenPlain = $request->headers->get('X-Refresh-Token');
 
-        if ($tokenPlain) {
-            $tokenHashed = hash('sha256', $tokenPlain);
-            $refreshToken = $this->em->getRepository(UserToken::class)
-                                     ->findOneBy(['token' => $tokenHashed]);
-
-            if ($refreshToken) {
-                $this->em->remove($refreshToken);
-                $this->em->flush();
-            }
-        }
+        $this->authService->logout($tokenPlain);
 
         return $this->json(['message' => 'Logged out'], 200);
     }
