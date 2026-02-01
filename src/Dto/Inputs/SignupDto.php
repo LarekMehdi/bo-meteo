@@ -8,20 +8,20 @@ class SignupDto
 {
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 50)]
-    private readonly string $firstname;
+    public readonly string $firstname;
 
     #[Assert\NotBlank]
     #[Assert\Length(min: 2, max: 50)]
-    private readonly string $lastname;
+    public readonly string $lastname;
 
     #[Assert\NotBlank]
     #[Assert\Email]
     #[Assert\Length(max: 200)]
-    private readonly string $email;
+    public readonly string $email;
 
     #[Assert\NotBlank]
     #[Assert\Length(min: 6)]
-    private readonly string $password;
+    public readonly string $password;
 
     public function __construct(
         string $firstname,

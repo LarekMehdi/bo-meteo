@@ -7,10 +7,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 class ForecastFilterDto
 {
     #[Assert\NotNull]
-    private float $latitude;
+    public float $latitude;
 
     #[Assert\NotNull]
-    private float $longitude;
+    public float $longitude;
 
     private bool $hourly = true;
 

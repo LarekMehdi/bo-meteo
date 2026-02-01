@@ -24,6 +24,6 @@ final class OpenMeteoApiService
 
         $data = $response->toArray();
 
-        return \UtilMapper::mapOpenApiForecastToForecastDto($data);
+        return \UtilMapper::mapOpenMeteoApiForecastToForecastDto($data);
     }
 }

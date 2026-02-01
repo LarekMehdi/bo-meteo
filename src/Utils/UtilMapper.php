@@ -6,7 +6,7 @@ use App\Dto\Outputs\HourlyUnitForecastDto;
 
 final class UtilMapper
 {
-    public static function mapOpenApiForecastToForecastDto(array $data): ForecastDto
+    public static function mapOpenMeteoApiForecastToForecastDto(array $data): ForecastDto
     {
         $hourlyDto = new HourlyForecastDto();
         $hourlyDto->setTime($data['hourly']['time']);

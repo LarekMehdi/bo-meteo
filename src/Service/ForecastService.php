@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Service;
+
+use App\Dto\Inputs\ForecastFilterDto;
+use App\Dto\Outputs\ForecastDto;
+use App\Exception\OpenMeteoException;
+
+final class ForecastService
+{
+    public function __construct(private readonly OpenMeteoApiService $openMeteoService)
+    {
+    }
+
+    /** FORECAST **/
+    public function fetchForecast(ForecastFilterDto $filter): ForecastDto
+    {
+        try {
+            return $this->openMeteoService->fetchForecast($filter);
+        } catch (\Exception $e) {
+            throw new OpenMeteoException('An error occured with OpenMeteo', 502, $e);
+        }
+    }
+}
