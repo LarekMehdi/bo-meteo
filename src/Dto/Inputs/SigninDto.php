@@ -9,11 +9,11 @@ class SigninDto
     #[Assert\NotBlank]
     #[Assert\Email]
     #[Assert\Length(max: 200)]
-    public readonly string $email;
+    private readonly string $email;
 
     #[Assert\NotBlank]
     #[Assert\Length(min: 6)]
-    public readonly string $password;
+    private readonly string $password;
 
     public function __construct(
         string $email,
@@ -21,5 +21,15 @@ class SigninDto
     ) {
         $this->email = $email;
         $this->password = $password;
+    }
+
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    public function getPassword(): string
+    {
+        return $this->password;
     }
 }

@@ -33,16 +33,16 @@ final class AuthController extends AbstractController
     #[Route('/signup', name: 'auth_signup', methods: ['POST'])]
     public function signup(SignupDto $dto): JsonResponse
     {
-        if ($this->userRepository->findOneBy(['email' => $dto->email])) {
+        if ($this->userRepository->findOneBy(['email' => $dto->getEmail()])) {
             return $this->json(['error' => 'Email already used'], 409);
         }
 
         $user = new User();
-        $user->setEmail($dto->email)
-             ->setFirstname($dto->firstname)
-             ->setLastname($dto->lastname)
+        $user->setEmail($dto->getEmail())
+             ->setFirstname($dto->getFirstname())
+             ->setLastname($dto->getLastname())
              ->setPassword(
-                 $this->passwordHasher->hashPassword($user, $dto->password)
+                 $this->passwordHasher->hashPassword($user, $dto->getPassword())
              );
 
         $this->em->persist($user);
@@ -57,8 +57,8 @@ final class AuthController extends AbstractController
     #[Route('/signin', name: 'auth_signin', methods: ['POST'])]
     public function signin(SigninDto $dto): JsonResponse
     {
-        $user = $this->userRepository->findOneBy(['email' => $dto->email]);
-        if (!$user || !$this->passwordHasher->isPasswordValid($user, $dto->password)) {
+        $user = $this->userRepository->findOneBy(['email' => $dto->getEmail()]);
+        if (!$user || !$this->passwordHasher->isPasswordValid($user, $dto->getPassword())) {
             return $this->json(['error' => 'Invalid credentials'], 401);
         }
 
