@@ -28,6 +28,7 @@ final class AuthController extends AbstractController
     ) {
     }
 
+    // TODO: AuthService
     /** SIGNUP **/
     #[Route('/signup', name: 'auth_signup', methods: ['POST'])]
     public function signup(SignupDto $dto): JsonResponse
