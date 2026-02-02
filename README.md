@@ -2,7 +2,7 @@
 
 Backend Symfony pour la gestion des prévisions météo et des villes via l’API Open Meteo.
 
-# Technologies
+## Technologies
 
 - Langage: PHP 8.x
 - Framework: Symfony 6.x
@@ -10,9 +10,9 @@ Backend Symfony pour la gestion des prévisions météo et des villes via l’AP
 - Port API: 8000 par defaut
 - Outils supplémentaires: Docker, Docker Compose, - Adminer, LexikJWTAuthenticationBundle
 
-# Quick Start
+## Quick Start
 
-Copier le .env en .env.local
+### Copier le .env en .env.local
 
 Renseigner les variables d'environnement
 
@@ -36,26 +36,26 @@ CORS_ALLOW_ORIGIN='^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$'
 ###< nelmio/cors-bundle ###
 ```
 
-Générer les clés JWT (Lexik)
+### Générer les clés JWT (Lexik)
 
 ```bash
 mkdir -p config/jwt
 php bin/console lexik:jwt:generate-keypair
 ```
 
-Lancer la base de données via Docker
+### Lancer la base de données via Docker
 
 ```bash
 docker compose --env-file .env.local up -d
 ```
 
-Installer les dépendances PHP
+### Installer les dépendances PHP
 
 ```bash
 composer install
 ```
 
-Démarrer le serveur Symfony
+### Démarrer le serveur Symfony
 
 ```bash
 symfony serve
@@ -68,25 +68,25 @@ ou
 symfony serve --port=8001
 ```
 
-Créer les tables en bdd
+### Créer les tables en bdd
 
 ```bash
 php bin/console doctrine:migrations:migrate
 ```
 
-Accéder à l’API
+### Accéder à l’API
 
 ```bash
 http://localhost:8000
 ```
 
-Adminer pour la DB
+### Adminer pour la DB
 
 ```bash
 http://localhost:8082
 ```
 
-# Configuration
+## Configuration
 
 Variables d’environnement: .env.local
 
