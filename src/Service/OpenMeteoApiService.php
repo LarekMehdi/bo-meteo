@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use App\Dto\Inputs\CityDto;
 use App\Dto\Inputs\CityFilterDto;
 use App\Dto\Inputs\ForecastFilterDto;
 use App\Dto\Outputs\ForecastDto;
@@ -63,22 +62,6 @@ final class OpenMeteoApiService
 
         $data = $response->toArray();
 
-        $cities = [];
-
-        if (!empty($data['results'])) {
-            foreach ($data['results'] as $item) {
-                $cities[] = new CityDto(
-                    $item['id'] ?? 0,
-                    $item['name'] ?? '',
-                    $item['latitude'] ?? 0.0,
-                    $item['longitude'] ?? 0.0,
-                    $item['country'] ?? null,
-                    $item['country_code'] ?? null,
-                    $item['timezone'] ?? null
-                );
-            }
-        }
-
-        return $cities;
+        return \UtilMapper::mapOpenMeteoApiCityToCityDtos($data);
     }
 }

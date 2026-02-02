@@ -1,5 +1,6 @@
 <?php
 
+use App\Dto\Inputs\CityDto;
 use App\Dto\Outputs\ForecastDto;
 use App\Dto\Outputs\HourlyForecastDto;
 use App\Dto\Outputs\HourlyUnitForecastDto;
@@ -30,5 +31,26 @@ final class UtilMapper
         $forecastDto->setHourlyUnits($hourlyUnitsDto);
 
         return $forecastDto;
+    }
+
+    public static function mapOpenMeteoApiCityToCityDtos(array $data): array
+    {
+        $cities = [];
+
+        if (!empty($data['results'])) {
+            foreach ($data['results'] as $item) {
+                $cities[] = new CityDto(
+                    $item['id'] ?? 0,
+                    $item['name'] ?? '',
+                    $item['latitude'] ?? 0.0,
+                    $item['longitude'] ?? 0.0,
+                    $item['country'] ?? null,
+                    $item['country_code'] ?? null,
+                    $item['timezone'] ?? null
+                );
+            }
+        }
+
+        return $cities;
     }
 }
