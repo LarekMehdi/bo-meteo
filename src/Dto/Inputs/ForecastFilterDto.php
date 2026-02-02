@@ -18,6 +18,8 @@ class ForecastFilterDto
 
     public bool $windSpeed10m = true;
 
+    public string $windSpeedUnit = 'kmh';  // TODO: enum => ms, mph and kn
+
     public function __construct(float $latitude, float $longitude, bool $hourly = true)
     {
         $this->latitude = $latitude;
@@ -48,5 +50,10 @@ class ForecastFilterDto
     public function isWindSpeed10m(): bool
     {
         return $this->windSpeed10m;
+    }
+
+    public function getWindSpeedUnit(): string
+    {
+        return $this->windSpeedUnit;
     }
 }
