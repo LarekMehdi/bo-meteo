@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Dto\Inputs\CityFilterDto;
 use App\Dto\Inputs\ForecastFilterDto;
 use App\Dto\Outputs\ForecastDto;
 use App\Exception\OpenMeteoException;
@@ -18,7 +19,17 @@ final class ForecastService
         try {
             return $this->openMeteoService->fetchForecast($filter);
         } catch (\Exception $e) {
-            throw new OpenMeteoException('An error occured with OpenMeteo', 502, $e);
+            throw new OpenMeteoException('An error occured with OpenMeteo [forecast]', 502, $e);
+        }
+    }
+
+    /** CITY **/
+    public function fetchCities(CityFilterDto $filter): array
+    {
+        try {
+            return $this->openMeteoService->fetchCity($filter);
+        } catch (\Exception $e) {
+            throw new OpenMeteoException('An error occured with OpenMeteo [city]', 502, $e);
         }
     }
 }

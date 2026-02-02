@@ -2,6 +2,8 @@
 
 namespace App\Service;
 
+use App\Dto\Inputs\CityDto;
+use App\Dto\Inputs\CityFilterDto;
 use App\Dto\Inputs\ForecastFilterDto;
 use App\Dto\Outputs\ForecastDto;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -12,6 +14,7 @@ final class OpenMeteoApiService
     {
     }
 
+    /** FORECAST **/
     public function fetchForecast(ForecastFilterDto $filter): ForecastDto
     {
         // variables horaires
@@ -47,5 +50,35 @@ final class OpenMeteoApiService
         $data = $response->toArray();
 
         return \UtilMapper::mapOpenMeteoApiForecastToForecastDto($data);
+    }
+
+    /** CITY **/
+    public function fetchCity(CityFilterDto $filter): array
+    {
+        $response = $this->client->request('GET', 'https://geocoding-api.open-meteo.com/v1/search', [
+            'query' => [
+                'name' => $filter->getName(),
+            ],
+        ]);
+
+        $data = $response->toArray();
+
+        $cities = [];
+
+        if (!empty($data['results'])) {
+            foreach ($data['results'] as $item) {
+                $cities[] = new CityDto(
+                    $item['id'] ?? 0,
+                    $item['name'] ?? '',
+                    $item['latitude'] ?? 0.0,
+                    $item['longitude'] ?? 0.0,
+                    $item['country'] ?? null,
+                    $item['country_code'] ?? null,
+                    $item['timezone'] ?? null
+                );
+            }
+        }
+
+        return $cities;
     }
 }
