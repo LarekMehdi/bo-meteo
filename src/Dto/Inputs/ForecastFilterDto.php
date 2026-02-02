@@ -12,7 +12,11 @@ class ForecastFilterDto
     #[Assert\NotNull]
     public float $longitude;
 
-    private bool $hourly = true;
+    public bool $hourly = true;
+
+    public bool $weatherCode = true;
+
+    public bool $windSpeed10m = true;
 
     public function __construct(float $latitude, float $longitude, bool $hourly = true)
     {
@@ -34,5 +38,15 @@ class ForecastFilterDto
     public function isHourly(): bool
     {
         return $this->hourly;
+    }
+
+    public function isWeatherCode(): bool
+    {
+        return $this->weatherCode;
+    }
+
+    public function isWindSpeed10m(): bool
+    {
+        return $this->windSpeed10m;
     }
 }

@@ -14,11 +14,25 @@ final class OpenMeteoApiService
 
     public function fetchForecast(ForecastFilterDto $filter): ForecastDto
     {
+        $hourly = [];
+
+        if ($filter->isHourly()) {
+            $hourly[] = 'temperature_2m';
+        }
+
+        if ($filter->isWeatherCode()) {
+            $hourly[] = 'weather_code';
+        }
+
+        if ($filter->isWindSpeed10m()) {
+            $hourly[] = 'wind_speed_10m';
+        }
+
         $response = $this->client->request('GET', 'https://api.open-meteo.com/v1/forecast', [
             'query' => [
                 'latitude' => $filter->getLatitude(),
                 'longitude' => $filter->getLongitude(),
-                'hourly' => $filter->isHourly() ? 'temperature_2m' : null,
+                'hourly' => implode(',', $hourly),
             ],
         ]);
 

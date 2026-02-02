@@ -10,6 +10,12 @@ class HourlyForecastDto
     /** @var float[] */
     private array $temperature2m;
 
+    /** @var int[] */
+    private array $weatherCode;
+
+    /** @var float[] */
+    private array $windSpeed10m;
+
     public function getTime(): array
     {
         return $this->time;
@@ -30,6 +36,30 @@ class HourlyForecastDto
     public function setTemperature2m(array $temperature2m): static
     {
         $this->temperature2m = $temperature2m;
+
+        return $this;
+    }
+
+    public function getWeatherCode(): array
+    {
+        return $this->weatherCode;
+    }
+
+    public function setWeatherCode(array $weatherCode): static
+    {
+        $this->weatherCode = $weatherCode;
+
+        return $this;
+    }
+
+    public function getWindSpeed10m(): array
+    {
+        return $this->windSpeed10m;
+    }
+
+    public function setWindSpeed10m(array $windSpeed10m): static
+    {
+        $this->windSpeed10m = $windSpeed10m;
 
         return $this;
     }

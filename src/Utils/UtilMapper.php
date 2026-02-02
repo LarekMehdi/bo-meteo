@@ -11,6 +11,8 @@ final class UtilMapper
         $hourlyDto = new HourlyForecastDto();
         $hourlyDto->setTime($data['hourly']['time']);
         $hourlyDto->setTemperature2m($data['hourly']['temperature_2m']);
+        $hourlyDto->setWeatherCode($data['hourly']['weather_code']);
+        $hourlyDto->setWindSpeed10m($data['hourly']['wind_speed_10m']);
 
         $hourlyUnitsDto = new HourlyUnitForecastDto();
         $hourlyUnitsDto->setTemperature2m($data['hourly_units']['temperature_2m']);
