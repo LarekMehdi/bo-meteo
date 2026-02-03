@@ -51,11 +51,11 @@ final class SearchForecastHistoryService
         $history = $this->historyRepository->find($id);
 
         if (!$history) {
-            throw new NotFoundHttpException('History not found');
+            throw new NotFoundHttpException("History with ID $id not found.");
         }
 
         if ($history->getUser()->getId() !== $user->getId()) {
-            throw new AccessDeniedHttpException('You cannot delete this history');
+            throw new AccessDeniedHttpException('You are not allowed to delete this history.');
         }
 
         $this->em->remove($history);

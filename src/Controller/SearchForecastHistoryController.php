@@ -6,8 +6,6 @@ use App\Dto\Inputs\ForecastFilterDto;
 use App\Service\SearchForecastHistoryService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -60,18 +58,11 @@ final class SearchForecastHistoryController extends AbstractController
         if (!$user) {
             throw new UnauthorizedHttpException('Bearer', 'User not authenticated');
         }
-        try {
-            $this->historyService->delete($id, $user);
 
-            return $this->json([
-                'message' => 'History deleted successfully',
-            ], 200);
-        } catch (NotFoundHttpException $e) {
-            return $this->json(['error' => $e->getMessage()], 404);
-        } catch (AccessDeniedHttpException $e) {
-            return $this->json(['error' => $e->getMessage()], 403);
-        } catch (\Exception $e) {
-            return $this->json(['error' => 'Unexpected error'], 500);
-        }
+        $this->historyService->delete($id, $user);
+
+        return $this->json([
+            'message' => 'History deleted successfully',
+        ], 200);
     }
 }
