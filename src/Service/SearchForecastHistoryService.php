@@ -7,6 +7,8 @@ use App\Entity\SearchForecastHistory;
 use App\Entity\User;
 use App\Repository\SearchForecastHistoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class SearchForecastHistoryService
 {
@@ -41,5 +43,22 @@ final class SearchForecastHistoryService
         $this->em->flush();
 
         return $history;
+    }
+
+    /** DELETE **/
+    public function delete(int $id, User $user): void
+    {
+        $history = $this->historyRepository->find($id);
+
+        if (!$history) {
+            throw new NotFoundHttpException('History not found');
+        }
+
+        if ($history->getUser()->getId() !== $user->getId()) {
+            throw new AccessDeniedHttpException('You cannot delete this history');
+        }
+
+        $this->em->remove($history);
+        $this->em->flush();
     }
 }

@@ -6,6 +6,8 @@ use App\Dto\Inputs\ForecastFilterDto;
 use App\Service\SearchForecastHistoryService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -32,7 +34,7 @@ final class SearchForecastHistoryController extends AbstractController
         return $this->json($history);
     }
 
-    /** FIND **/
+    /** FIND ALL **/
     #[Route('', name: 'history_find_all_by_user', methods: ['POST'])]
     public function findAllByUser(): JsonResponse
     {
@@ -46,5 +48,30 @@ final class SearchForecastHistoryController extends AbstractController
         $histories = $this->historyService->findAllByUser($user);
 
         return $this->json($histories);
+    }
+
+    /** DELETE **/
+    #[Route('/{id}', name: 'history_delete', methods: ['DELETE'])]
+    public function delete(int $id): JsonResponse
+    {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        if (!$user) {
+            throw new UnauthorizedHttpException('Bearer', 'User not authenticated');
+        }
+        try {
+            $this->historyService->delete($id, $user);
+
+            return $this->json([
+                'message' => 'History deleted successfully',
+            ], 200);
+        } catch (NotFoundHttpException $e) {
+            return $this->json(['error' => $e->getMessage()], 404);
+        } catch (AccessDeniedHttpException $e) {
+            return $this->json(['error' => $e->getMessage()], 403);
+        } catch (\Exception $e) {
+            return $this->json(['error' => 'Unexpected error'], 500);
+        }
     }
 }
