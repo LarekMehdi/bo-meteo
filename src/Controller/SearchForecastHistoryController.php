@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Dto\Inputs\ForecastFilterDto;
+use App\Dto\Inputs\HistoryFilterDto;
 use App\Service\SearchForecastHistoryService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -33,8 +34,8 @@ final class SearchForecastHistoryController extends AbstractController
     }
 
     /** FIND ALL **/
-    #[Route('', name: 'history_find_all_by_user', methods: ['POST'])]
-    public function findAllByUser(): JsonResponse
+    #[Route('', name: 'history_find_all_by_user', methods: ['GET'])]
+    public function findAllByUser(HistoryFilterDto $filter): JsonResponse
     {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
@@ -43,7 +44,7 @@ final class SearchForecastHistoryController extends AbstractController
             throw new UnauthorizedHttpException('Bearer', 'User not authenticated');
         }
 
-        $histories = $this->historyService->findAllByUser($user);
+        $histories = $this->historyService->findAllByUser($user, $filter);
 
         return $this->json($histories);
     }

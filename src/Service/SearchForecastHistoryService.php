@@ -3,9 +3,12 @@
 namespace App\Service;
 
 use App\Dto\Inputs\ForecastFilterDto;
+use App\Dto\Inputs\HistoryFilterDto;
+use App\Dto\Outputs\PageDto;
 use App\Entity\SearchForecastHistory;
 use App\Entity\User;
 use App\Repository\SearchForecastHistoryRepository;
+use App\Utils\UtilMapper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -19,11 +22,14 @@ final class SearchForecastHistoryService
     }
 
     /** FIND ALL **/
-    public function findAllByUser(User $user): array
+    public function findAllByUser(User $user, HistoryFilterDto $filter): PageDto
     {
-        $entities = $this->historyRepository->findAllByUser($user);
+        $entities = $this->historyRepository->findAllByUser($user, $filter);
+        $total = $this->historyRepository->countByUser($user);
 
-        return \UtilMapper::mapHistoriesToHistoryDtos($entities);
+        $dtos = UtilMapper::mapHistoriesToHistoryDtos($entities);
+
+        return new PageDto($dtos, $total);
     }
 
     /** CREATE **/

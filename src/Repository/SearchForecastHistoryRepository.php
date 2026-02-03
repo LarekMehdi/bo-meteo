@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Dto\Inputs\HistoryFilterDto;
 use App\Entity\SearchForecastHistory;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -20,14 +21,26 @@ class SearchForecastHistoryRepository extends ServiceEntityRepository
     /**
      * @return SearchForecastHistory[]
      */
-    public function findAllByUser(User $user): array
+    public function findAllByUser(User $user, HistoryFilterDto $filter): array
     {
-        return $this->createQueryBuilder('h')
-            ->andWhere('h.user = :user')
-            ->setParameter('user', $user)
-            ->orderBy('h.createdAt', 'DESC')
-            ->getQuery()
-            ->getResult();
+        $qb = $this->createQueryBuilder('h')
+        ->andWhere('h.user = :user')
+        ->setParameter('user', $user)
+        ->orderBy('h.createdAt', 'DESC')
+        ->setFirstResult($filter->getOffset())
+        ->setMaxResults($filter->limit);
+
+        if (null !== $filter->latitude) {
+            $qb->andWhere('h.latitude = :lat')
+               ->setParameter('lat', $filter->latitude);
+        }
+
+        if (null !== $filter->longitude) {
+            $qb->andWhere('h.longitude = :lon')
+               ->setParameter('lon', $filter->longitude);
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
     //    /**
