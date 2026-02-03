@@ -22,19 +22,19 @@ class ForecastFilterDto
 
     public function __construct(float $latitude, float $longitude, bool $hourly = true)
     {
-        $this->latitude = $latitude;
-        $this->longitude = $longitude;
+        $this->latitude = round($this->$latitude, 2);
+        $this->longitude = round($this->$longitude, 2);
         $this->hourly = $hourly;
     }
 
     public function getLatitude(): float
     {
-        return $this->latitude;
+        return round($this->latitude, 2);
     }
 
     public function getLongitude(): float
     {
-        return $this->longitude;
+        return round($this->longitude, 2);
     }
 
     public function isHourly(): bool
