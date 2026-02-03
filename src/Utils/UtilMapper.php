@@ -2,11 +2,13 @@
 
 use App\Dto\Outputs\CityDto;
 use App\Dto\Outputs\ForecastDto;
+use App\Dto\Outputs\HistoryDto;
 use App\Dto\Outputs\HourlyForecastDto;
 use App\Dto\Outputs\HourlyUnitForecastDto;
 
 final class UtilMapper
 {
+    /** FORECAST **/
     public static function mapOpenMeteoApiForecastToForecastDto(array $data): ForecastDto
     {
         $hourlyDto = new HourlyForecastDto();
@@ -33,6 +35,7 @@ final class UtilMapper
         return $forecastDto;
     }
 
+    /** CITY **/
     public static function mapOpenMeteoApiCityToCityDtos(array $data): array
     {
         $cities = [];
@@ -52,5 +55,32 @@ final class UtilMapper
         }
 
         return $cities;
+    }
+
+    /**
+     * @param SearchForecastHistory[] $datas
+     *
+     * @return HistoryDto[]
+     */
+    public static function mapHistoriesToHistoryDtos(array $datas): array
+    {
+        $dtos = [];
+
+        foreach ($datas as $item) {
+            $dto = new HistoryDto();
+            $dto->setId($item->getId());
+            $dto->setUserId($item->getUser()->getId());
+            $dto->setLatitude($item->getLatitude());
+            $dto->setLongitude($item->getLongitude());
+            $dto->setHourly($item->isHourly());
+            $dto->setWeatherCode($item->isWeatherCode());
+            $dto->setWindSpeed10m($item->isWindSpeed10m());
+            $dto->setWindSpeedUnit($item->getWindSpeedUnit());
+            $dto->setCreatedAt($item->getCreatedAt());
+
+            $dtos[] = $dto;
+        }
+
+        return $dtos;
     }
 }

@@ -16,6 +16,14 @@ final class SearchForecastHistoryService
     ) {
     }
 
+    /** FIND ALL **/
+    public function findAllByUser(User $user): array
+    {
+        $entities = $this->historyRepository->findAllByUser($user);
+
+        return \UtilMapper::mapHistoriesToHistoryDtos($entities);
+    }
+
     /** CREATE **/
     public function create(ForecastFilterDto $dto, User $user): SearchForecastHistory
     {

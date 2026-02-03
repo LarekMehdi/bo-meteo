@@ -31,4 +31,20 @@ final class SearchForecastHistoryController extends AbstractController
 
         return $this->json($history);
     }
+
+    /** FIND **/
+    #[Route('', name: 'history_find_all_by_user', methods: ['POST'])]
+    public function findAllByUser(): JsonResponse
+    {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        if (!$user) {
+            throw new UnauthorizedHttpException('Bearer', 'User not authenticated');
+        }
+
+        $histories = $this->historyService->findAllByUser($user);
+
+        return $this->json($histories);
+    }
 }

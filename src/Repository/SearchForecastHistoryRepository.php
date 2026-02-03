@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\SearchForecastHistory;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -14,6 +15,19 @@ class SearchForecastHistoryRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, SearchForecastHistory::class);
+    }
+
+    /**
+     * @return SearchForecastHistory[]
+     */
+    public function findAllByUser(User $user): array
+    {
+        return $this->createQueryBuilder('h')
+            ->andWhere('h.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('h.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
     }
 
     //    /**
