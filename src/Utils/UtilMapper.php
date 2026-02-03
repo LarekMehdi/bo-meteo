@@ -13,26 +13,29 @@ final class UtilMapper
     /** FORECAST **/
     public static function mapOpenMeteoApiForecastToForecastDto(array $data): ForecastDto
     {
-        $hourlyDto = new HourlyForecastDto();
-        $hourlyDto->setTime($data['hourly']['time']);
-        $hourlyDto->setTemperature2m($data['hourly']['temperature_2m']);
-        $hourlyDto->setWeatherCode($data['hourly']['weather_code']);
-        $hourlyDto->setWindSpeed10m($data['hourly']['wind_speed_10m']);
+        $hourlyDto = new HourlyForecastDto(
+            time: $data['hourly']['time'],
+            temperature2m: $data['hourly']['temperature_2m'],
+            weatherCode: $data['hourly']['weather_code'],
+            windSpeed10m: $data['hourly']['wind_speed_10m']
+        );
 
-        $hourlyUnitsDto = new HourlyUnitForecastDto();
-        $hourlyUnitsDto->setTemperature2m($data['hourly_units']['temperature_2m']);
-        $hourlyUnitsDto->setWindSpeedUnit($data['hourly_units']['wind_speed_10m']);
+        $hourlyUnitsDto = new HourlyUnitForecastDto(
+            temperature2m: $data['hourly_units']['temperature_2m'],
+            windSpeedUnit: $data['hourly_units']['wind_speed_10m']
+        );
 
-        $forecastDto = new ForecastDto();
-        $forecastDto->setLatitude(round($data['latitude'], 2));
-        $forecastDto->setLongitude(round($data['longitude'], 2));
-        $forecastDto->setElevation($data['elevation']);
-        $forecastDto->setGenerationtimeMs($data['generationtime_ms']);
-        $forecastDto->setUtcOffsetSeconds($data['utc_offset_seconds']);
-        $forecastDto->setTimezone($data['timezone']);
-        $forecastDto->setTimezoneAbbreviation($data['timezone_abbreviation']);
-        $forecastDto->setHourly($hourlyDto);
-        $forecastDto->setHourlyUnits($hourlyUnitsDto);
+        $forecastDto = new ForecastDto(
+            latitude: round($data['latitude'], 2),
+            longitude: round($data['longitude'], 2),
+            elevation: $data['elevation'],
+            generationtimeMs: $data['generationtime_ms'],
+            utcOffsetSeconds: $data['utc_offset_seconds'],
+            timezone: $data['timezone'],
+            timezoneAbbreviation: $data['timezone_abbreviation'],
+            hourly: $hourlyDto,
+            hourlyUnits: $hourlyUnitsDto
+        );
 
         return $forecastDto;
     }

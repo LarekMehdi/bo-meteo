@@ -8,6 +8,12 @@ class HourlyUnitForecastDto
 
     private string $windSpeedUnit;
 
+    public function __construct(string $temperature2m, string $windSpeedUnit)
+    {
+        $this->temperature2m = $temperature2m;
+        $this->windSpeedUnit = $windSpeedUnit;
+    }
+
     public function getTemperature2m(): string
     {
         return $this->temperature2m;

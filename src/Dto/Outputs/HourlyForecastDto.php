@@ -16,6 +16,18 @@ class HourlyForecastDto
     /** @var float[] */
     private array $windSpeed10m;
 
+    public function __construct(
+        array $time,
+        array $temperature2m,
+        array $weatherCode,
+        array $windSpeed10m,
+    ) {
+        $this->time = $time;
+        $this->temperature2m = $temperature2m;
+        $this->weatherCode = $weatherCode;
+        $this->windSpeed10m = $windSpeed10m;
+    }
+
     public function getTime(): array
     {
         return $this->time;
