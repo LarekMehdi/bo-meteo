@@ -8,6 +8,7 @@ use App\Exception\OpenMeteoException;
 use App\Service\ForecastService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/forecast')]
@@ -18,8 +19,8 @@ final class ForecastController extends AbstractController
     }
 
     // TODO: ExceptionListener
-    #[Route('/', name: 'forecast', methods: ['GET'])]
-    public function getForecast(ForecastFilterDto $filter): JsonResponse
+    #[Route('', name: 'forecast', methods: ['GET'])]
+    public function getForecast(Request $request, ForecastFilterDto $filter): JsonResponse
     {
         try {
             $forecastDto = $this->forecastService->fetchForecast($filter);
