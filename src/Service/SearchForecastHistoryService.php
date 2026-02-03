@@ -25,7 +25,7 @@ final class SearchForecastHistoryService
     public function findAllByUser(User $user, HistoryFilterDto $filter): PageDto
     {
         $entities = $this->historyRepository->findAllByUser($user, $filter);
-        $total = $this->historyRepository->countByUser($user);
+        $total = $this->historyRepository->countByUser($user, $filter);
 
         $dtos = UtilMapper::mapHistoriesToHistoryDtos($entities);
 
