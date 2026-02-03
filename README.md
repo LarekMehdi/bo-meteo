@@ -18,7 +18,7 @@ Renseigner les variables d'environnement
 
 ```bash
 
-DATABASE_URL="mysql://user:pass@localhost:3306/db?serverVersion=11.1-MariaDB&charset=utf8mb4"
+DATABASE_URL="mysql://user:pass@127.0.0.1:3306/db?charset=utf8mb4"
 
 MYSQL_DATABASE="db"
 MYSQL_USER="user"
@@ -36,11 +36,24 @@ CORS_ALLOW_ORIGIN='^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$'
 ###< nelmio/cors-bundle ###
 ```
 
+### Installer les dépendances PHP
+
+```bash
+composer install
+```
+
 ### Générer les clés JWT (Lexik)
 
 ```bash
 mkdir -p config/jwt
 php bin/console lexik:jwt:generate-keypair
+```
+
+### Sur Linux, l'utilisateur doit avoir les droits sur les clefs
+
+```bash
+chmod 600 config/jwt/private.pem
+chmod 600 config/jwt/public.pem
 ```
 
 ### Lancer la base de données via Docker
@@ -49,23 +62,18 @@ php bin/console lexik:jwt:generate-keypair
 docker compose --env-file .env.local up -d
 ```
 
-### Installer les dépendances PHP
-
-```bash
-composer install
-```
-
 ### Démarrer le serveur Symfony
 
 ```bash
-symfony serve
+php bin/console serve
+php -S localhost:8000 -t public
 ```
 
 ou
 
 ```bash
 ###> pour un port custom
-symfony serve --port=8001
+php bin/console --port=8001
 ```
 
 ### Créer les tables en bdd
