@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Dto\Inputs;
+namespace App\Dto\Outputs;
 
 class CityDto
 {
