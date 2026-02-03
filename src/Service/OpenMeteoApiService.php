@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Dto\Inputs\CityFilterDto;
 use App\Dto\Inputs\ForecastFilterDto;
 use App\Dto\Outputs\ForecastDto;
+use App\Utils\UtilMapper;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class OpenMeteoApiService
@@ -48,7 +49,7 @@ final class OpenMeteoApiService
 
         $data = $response->toArray();
 
-        return \UtilMapper::mapOpenMeteoApiForecastToForecastDto($data);
+        return UtilMapper::mapOpenMeteoApiForecastToForecastDto($data);
     }
 
     /** CITY **/
@@ -62,6 +63,6 @@ final class OpenMeteoApiService
 
         $data = $response->toArray();
 
-        return \UtilMapper::mapOpenMeteoApiCityToCityDtos($data);
+        return UtilMapper::mapOpenMeteoApiCityToCityDtos($data);
     }
 }

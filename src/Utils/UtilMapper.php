@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Utils;
+
 use App\Dto\Outputs\CityDto;
 use App\Dto\Outputs\ForecastDto;
 use App\Dto\Outputs\HistoryDto;
