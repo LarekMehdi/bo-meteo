@@ -22,26 +22,20 @@ final class AuthController extends AbstractController
     #[Route('/signup', name: 'auth_signup', methods: ['POST'])]
     public function signup(SignupDto $dto): JsonResponse
     {
-        try {
-            $userDto = $this->authService->signup($dto);
+        $userDto = $this->authService->signup($dto);
 
-            return $this->json($userDto, 201);
-        } catch (\DomainException $e) {
-            return $this->json(['error' => $e->getMessage()], 409);
-        }
+        return $this->json($userDto, 201);
+
+        return $this->json(['error' => $e->getMessage()], 409);
     }
 
     /** SIGNIN **/
     #[Route('/signin', name: 'auth_signin', methods: ['POST'])]
     public function signin(SigninDto $dto): JsonResponse
     {
-        try {
-            $responseDto = $this->authService->signin($dto);
+        $responseDto = $this->authService->signin($dto);
 
-            return $this->json($responseDto, 200);
-        } catch (\DomainException $e) {
-            return $this->json(['error' => $e->getMessage()], 401);
-        }
+        return $this->json($responseDto, 200);
     }
 
     /** REFRESH **/
@@ -50,22 +44,20 @@ final class AuthController extends AbstractController
     {
         $tokenPlain = $request->headers->get('X-Refresh-Token');
 
-        try {
-            $responseDto = $this->authService->refresh($tokenPlain);
+        $responseDto = $this->authService->refresh($tokenPlain);
 
-            return $this->json($responseDto, 200);
-        } catch (\DomainException $e) {
-            $message = $e->getMessage();
+        return $this->json($responseDto, 200);
 
-            $status = match ($message) {
-                'Refresh token required' => 400,
-                'Invalid refresh token' => 401,
-                'Refresh token expired' => 403,
-                default => 500,
-            };
+        $message = $e->getMessage();
 
-            return $this->json(['error' => $message], $status);
-        }
+        $status = match ($message) {
+            'Refresh token required' => 400,
+            'Invalid refresh token' => 401,
+            'Refresh token expired' => 403,
+            default => 500,
+        };
+
+        return $this->json(['error' => $message], $status);
     }
 
     /** LOGOUT **/

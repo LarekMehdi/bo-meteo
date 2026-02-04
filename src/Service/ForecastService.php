@@ -18,8 +18,8 @@ final class ForecastService
     {
         try {
             return $this->openMeteoService->fetchForecast($filter);
-        } catch (\Exception $e) {
-            throw new OpenMeteoException('An error occured with OpenMeteo [forecast]', 502, $e);
+        } catch (\Throwable $e) {
+            throw new OpenMeteoException('An error occurred with OpenMeteo [forecast]', $e);
         }
     }
 
@@ -28,8 +28,8 @@ final class ForecastService
     {
         try {
             return $this->openMeteoService->fetchCity($filter);
-        } catch (\Exception $e) {
-            throw new OpenMeteoException('An error occured with OpenMeteo [city]', 502, $e);
+        } catch (\Throwable $e) {
+            throw new OpenMeteoException('An error occured with OpenMeteo [city]', $e);
         }
     }
 }

@@ -11,6 +11,10 @@ use App\Entity\UserToken;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 final class AuthService
@@ -27,7 +31,7 @@ final class AuthService
     public function signup(SignupDto $dto): UserDto
     {
         if ($this->userRepository->findOneBy(['email' => $dto->getEmail()])) {
-            throw new \DomainException('Email already used');
+            throw new ConflictHttpException('Email already used');
         }
 
         $user = new User();
@@ -50,7 +54,7 @@ final class AuthService
         $user = $this->userRepository->findOneBy(['email' => $dto->getEmail()]);
 
         if (!$user || !$this->passwordHasher->isPasswordValid($user, $dto->getPassword())) {
-            throw new \DomainException('Invalid credentials');
+            throw new UnauthorizedHttpException('', 'Invalid credentials');
         }
 
         $accessToken = $this->jwtManager->create($user);
@@ -78,7 +82,7 @@ final class AuthService
     public function refresh(string $tokenPlain): AuthResponseDto
     {
         if (!$tokenPlain) {
-            throw new \DomainException('Refresh token required');
+            throw new BadRequestHttpException('Refresh token required');
         }
 
         $tokenHashed = hash('sha256', $tokenPlain);
@@ -87,11 +91,11 @@ final class AuthService
                                     ->findOneBy(['token' => $tokenHashed]);
 
         if (!$oldRefreshToken) {
-            throw new \DomainException('Invalid refresh token');
+            throw new UnauthorizedHttpException('', 'Invalid refresh token');
         }
 
         if ($oldRefreshToken->isExpired()) {
-            throw new \DomainException('Refresh token expired');
+            throw new AccessDeniedHttpException('Refresh token expired');
         }
 
         $user = $oldRefreshToken->getUser();
