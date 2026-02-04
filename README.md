@@ -66,6 +66,11 @@ docker compose --env-file .env.local up -d
 
 ```bash
 php bin/console serve
+```
+
+ou
+
+```bash
 php -S localhost:8000 -t public
 ```
 
@@ -93,6 +98,14 @@ http://localhost:8000
 ```bash
 http://localhost:8082
 ```
+
+Renseigner les infos de connection:
+
+- Système: MySQL / MariaDB
+- Serveur: database (le nom du service docker)
+- Utilisateur: [MYSQL_USER]
+- Mot de passe: [MYSQL_PASSWORD]
+- Base de données: [MYSQL_DATABASE]
 
 ### Lancer les tests
 
