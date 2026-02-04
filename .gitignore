@@ -19,3 +19,8 @@
 ###< friendsofphp/php-cs-fixer ###
 
 .vscode
+
+###> phpunit/phpunit ###
+/phpunit.xml
+/.phpunit.cache/
+###< phpunit/phpunit ###
