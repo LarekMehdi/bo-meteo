@@ -45,6 +45,8 @@ final class SearchForecastHistoryService
             windSpeedUnit: $dto->getWindSpeedUnit(),
         );
 
+        $history->setCityName($dto->getCityName());
+
         $this->em->persist($history);
         $this->em->flush();
 

@@ -26,6 +26,9 @@ class SearchForecastHistory
     #[ORM\Column]
     private float $longitude;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $cityName = null;
+
     #[ORM\Column]
     private bool $hourly;
 
@@ -99,6 +102,18 @@ class SearchForecastHistory
     public function setLongitude(float $longitude): static
     {
         $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    public function getCityName(): ?string
+    {
+        return $this->cityName;
+    }
+
+    public function setCityName(?string $cityName): static
+    {
+        $this->cityName = $cityName;
 
         return $this;
     }

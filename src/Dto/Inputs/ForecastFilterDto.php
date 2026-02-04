@@ -12,6 +12,8 @@ class ForecastFilterDto
     #[Assert\NotNull]
     public float $longitude;
 
+    public ?string $cityName = null;
+
     public bool $hourly = true;
 
     public bool $weatherCode = true;
@@ -35,6 +37,11 @@ class ForecastFilterDto
     public function getLongitude(): float
     {
         return round($this->longitude, 2);
+    }
+
+    public function getCityName(): ?string
+    {
+        return $this->cityName;
     }
 
     public function isHourly(): bool

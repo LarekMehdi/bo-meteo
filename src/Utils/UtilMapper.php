@@ -77,6 +77,7 @@ final class UtilMapper
             $dto->setUserId($item->getUser()->getId());
             $dto->setLatitude($item->getLatitude());
             $dto->setLongitude($item->getLongitude());
+            $dto->setCityName($item->getCityName());
             $dto->setHourly($item->isHourly());
             $dto->setWeatherCode($item->isWeatherCode());
             $dto->setWindSpeed10m($item->isWindSpeed10m());

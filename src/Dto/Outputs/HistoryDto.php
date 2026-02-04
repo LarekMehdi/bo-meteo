@@ -8,6 +8,7 @@ class HistoryDto
     private int $userId;
     private float $latitude;
     private float $longitude;
+    private ?string $cityName;
     private bool $hourly;
     private bool $weatherCode;
     private bool $windSpeed10m;
@@ -62,6 +63,18 @@ class HistoryDto
     public function setLongitude(float $longitude): self
     {
         $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    public function getCityName(): ?string
+    {
+        return $this->cityName;
+    }
+
+    public function setCityName(?string $cityName): self
+    {
+        $this->cityName = $cityName;
 
         return $this;
     }
