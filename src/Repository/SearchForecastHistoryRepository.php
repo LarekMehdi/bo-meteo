@@ -43,6 +43,27 @@ class SearchForecastHistoryRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /** COUNT **/
+    public function countByUser(User $user, HistoryFilterDto $filter): int
+    {
+        $qb = $this->createQueryBuilder('h')
+            ->select('COUNT(h.id)')
+            ->andWhere('h.user = :user')
+            ->setParameter('user', $user);
+
+        if (null !== $filter->latitude) {
+            $qb->andWhere('h.latitude = :lat')
+               ->setParameter('lat', $filter->latitude);
+        }
+
+        if (null !== $filter->longitude) {
+            $qb->andWhere('h.longitude = :lon')
+               ->setParameter('lon', $filter->longitude);
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
     //    /**
     //     * @return SearchForecastHistory[] Returns an array of SearchForecastHistory objects
     //     */

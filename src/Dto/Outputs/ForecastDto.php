@@ -14,6 +14,28 @@ class ForecastDto
     private HourlyForecastDto $hourly;
     private HourlyUnitForecastDto $hourlyUnits;
 
+    public function __construct(
+        float $latitude,
+        float $longitude,
+        float $elevation,
+        float $generationtimeMs,
+        int $utcOffsetSeconds,
+        string $timezone,
+        string $timezoneAbbreviation,
+        HourlyForecastDto $hourly,
+        HourlyUnitForecastDto $hourlyUnits,
+    ) {
+        $this->latitude = $latitude;
+        $this->longitude = $longitude;
+        $this->elevation = $elevation;
+        $this->generationtimeMs = $generationtimeMs;
+        $this->utcOffsetSeconds = $utcOffsetSeconds;
+        $this->timezone = $timezone;
+        $this->timezoneAbbreviation = $timezoneAbbreviation;
+        $this->hourly = $hourly;
+        $this->hourlyUnits = $hourlyUnits;
+    }
+
     public function getLatitude(): float
     {
         return $this->latitude;

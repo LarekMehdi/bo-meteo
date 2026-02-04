@@ -94,6 +94,20 @@ http://localhost:8000
 http://localhost:8082
 ```
 
+### Lancer les tests
+
+```bash
+###> tous les tests
+php bin/phpunit
+
+###> tous les tests avec logs
+php bin/phpunit --debug
+
+###> un test précis
+php bin/phpunit tests/Service/SearchForecastHistoryServiceTest.php
+
+```
+
 ## Configuration
 
 Variables d’environnement: .env.local

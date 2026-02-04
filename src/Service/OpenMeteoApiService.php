@@ -8,7 +8,7 @@ use App\Dto\Outputs\ForecastDto;
 use App\Utils\UtilMapper;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-final class OpenMeteoApiService
+class OpenMeteoApiService
 {
     public function __construct(private readonly HttpClientInterface $client)
     {
