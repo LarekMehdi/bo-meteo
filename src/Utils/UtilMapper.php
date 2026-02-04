@@ -17,12 +17,12 @@ final class UtilMapper
             time: $data['hourly']['time'],
             temperature2m: $data['hourly']['temperature_2m'],
             weatherCode: $data['hourly']['weather_code'],
-            windSpeed10m: $data['hourly']['wind_speed_10m']
+            windSpeed10m: $data['hourly']['wind_speed_10m'] ?? null
         );
 
         $hourlyUnitsDto = new HourlyUnitForecastDto(
             temperature2m: $data['hourly_units']['temperature_2m'],
-            windSpeedUnit: $data['hourly_units']['wind_speed_10m']
+            windSpeedUnit: $data['hourly_units']['wind_speed_10m'] ?? null
         );
 
         $forecastDto = new ForecastDto(

@@ -6,12 +6,12 @@ class HourlyUnitForecastDto
 {
     private string $temperature2m;
 
-    private string $windSpeedUnit;
+    private ?string $windSpeedUnit;
 
-    public function __construct(string $temperature2m, string $windSpeedUnit)
+    public function __construct(string $temperature2m, ?string $windSpeedUnit = null)
     {
         $this->temperature2m = $temperature2m;
-        $this->windSpeedUnit = $windSpeedUnit;
+        $this->windSpeedUnit = $windSpeedUnit ?? '';
     }
 
     public function getTemperature2m(): string
@@ -26,14 +26,14 @@ class HourlyUnitForecastDto
         return $this;
     }
 
-    public function getWindSpeedUnit(): string
+    public function getWindSpeedUnit(): ?string
     {
         return $this->windSpeedUnit;
     }
 
-    public function setWindSpeedUnit(string $windSpeedUnit): static
+    public function setWindSpeedUnit(?string $windSpeedUnit): static
     {
-        $this->windSpeedUnit = $windSpeedUnit;
+        $this->windSpeedUnit = $windSpeedUnit ?? '';
 
         return $this;
     }

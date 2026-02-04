@@ -39,7 +39,7 @@ class OpenMeteoApiService
             $query['hourly'] = implode(',', $hourly);
         }
 
-        if ($filter->getWindSpeedUnit()) {
+        if ($filter->isWindSpeed10m()) {
             $query['windspeed_unit'] = $filter->getWindSpeedUnit();
         }
 

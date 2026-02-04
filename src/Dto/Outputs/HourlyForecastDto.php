@@ -13,19 +13,19 @@ class HourlyForecastDto
     /** @var int[] */
     private array $weatherCode;
 
-    /** @var float[] */
-    private array $windSpeed10m;
+    /** @var float[]|null */
+    private ?array $windSpeed10m;
 
     public function __construct(
         array $time,
         array $temperature2m,
         array $weatherCode,
-        array $windSpeed10m,
+        ?array $windSpeed10m = null,
     ) {
         $this->time = $time;
         $this->temperature2m = $temperature2m;
         $this->weatherCode = $weatherCode;
-        $this->windSpeed10m = $windSpeed10m;
+        $this->windSpeed10m = $windSpeed10m ?? [];
     }
 
     public function getTime(): array
@@ -64,14 +64,14 @@ class HourlyForecastDto
         return $this;
     }
 
-    public function getWindSpeed10m(): array
+    public function getWindSpeed10m(): ?array
     {
         return $this->windSpeed10m;
     }
 
-    public function setWindSpeed10m(array $windSpeed10m): static
+    public function setWindSpeed10m(?array $windSpeed10m): static
     {
-        $this->windSpeed10m = $windSpeed10m;
+        $this->windSpeed10m = $windSpeed10m ?? [];
 
         return $this;
     }
