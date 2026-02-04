@@ -20,7 +20,10 @@ class SignupDto
     public readonly string $email;
 
     #[Assert\NotBlank]
-    #[Assert\Length(min: 6)]
+    #[Assert\Regex(
+        pattern: '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W]).{6,}$/',
+        message: 'Password must contain at least 6 characters, one uppercase letter, one lowercase letter, one number and one special character.'
+    )]
     public readonly string $password;
 
     public function __construct(
