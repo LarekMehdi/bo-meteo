@@ -7,6 +7,7 @@ use App\Dto\Inputs\HistoryFilterDto;
 use App\Dto\Outputs\PageDto;
 use App\Entity\SearchForecastHistory;
 use App\Entity\User;
+use App\Exception\PreconditionFailedException;
 use App\Repository\SearchForecastHistoryRepository;
 use App\Utils\UtilMapper;
 use Doctrine\ORM\EntityManagerInterface;
@@ -35,6 +36,11 @@ final class SearchForecastHistoryService
     /** CREATE **/
     public function create(ForecastFilterDto $dto, User $user): SearchForecastHistory
     {
+        $existingCount = $this->historyRepository->countExisting($user, $dto);
+        if ($existingCount > 0) {
+            throw new PreconditionFailedException('An identical search already exists');
+        }
+
         $history = new SearchForecastHistory(
             user: $user,
             latitude: $dto->getLatitude(),
