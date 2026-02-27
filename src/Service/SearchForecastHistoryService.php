@@ -9,6 +9,7 @@ use App\Entity\SearchForecastHistory;
 use App\Entity\User;
 use App\Exception\PreconditionFailedException;
 use App\Repository\SearchForecastHistoryRepository;
+use App\Utils\UtilHash;
 use App\Utils\UtilMapper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -41,6 +42,8 @@ final class SearchForecastHistoryService
             throw new PreconditionFailedException('An identical search already exists');
         }
 
+        $hash = UtilHash::generateHashForHistory($dto);
+
         $history = new SearchForecastHistory(
             user: $user,
             latitude: $dto->getLatitude(),
@@ -49,6 +52,7 @@ final class SearchForecastHistoryService
             weatherCode: $dto->isWeatherCode(),
             windSpeed10m: $dto->isWindSpeed10m(),
             windSpeedUnit: $dto->getWindSpeedUnit(),
+            hash: $hash,
         );
 
         $history->setCityName($dto->getCityName());
