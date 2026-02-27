@@ -37,12 +37,12 @@ final class SearchForecastHistoryService
     /** CREATE **/
     public function create(ForecastFilterDto $dto, User $user): SearchForecastHistory
     {
-        $existingCount = $this->historyRepository->countExisting($user, $dto);
+        $hash = UtilHash::generateHashForHistory($user, $dto);
+
+        $existingCount = $this->historyRepository->countByHash($hash);
         if ($existingCount > 0) {
             throw new PreconditionFailedException('An identical search already exists');
         }
-
-        $hash = UtilHash::generateHashForHistory($user, $dto);
 
         $history = new SearchForecastHistory(
             user: $user,

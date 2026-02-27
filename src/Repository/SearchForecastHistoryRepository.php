@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use App\Dto\Inputs\ForecastFilterDto;
 use App\Dto\Inputs\HistoryFilterDto;
 use App\Entity\SearchForecastHistory;
 use App\Entity\User;
@@ -65,29 +64,12 @@ class SearchForecastHistoryRepository extends ServiceEntityRepository
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
-    public function countExisting(User $user, ForecastFilterDto $dto): int
+    public function countByHash(string $hash): int
     {
         $qb = $this->createQueryBuilder('h')
             ->select('COUNT(h.id)')
-            ->andWhere('h.user = :user')
-            ->setParameter('user', $user)
-            ->andWhere('h.latitude = :lat')
-            ->setParameter('lat', $dto->getLatitude())
-            ->andWhere('h.longitude = :lon')
-            ->setParameter('lon', $dto->getLongitude())
-            ->andWhere('h.hourly = :hourly')
-            ->setParameter('hourly', $dto->isHourly())
-            ->andWhere('h.weatherCode = :weatherCode')
-            ->setParameter('weatherCode', $dto->isWeatherCode())
-            ->andWhere('h.windSpeed10m = :windSpeed10m')
-            ->setParameter('windSpeed10m', $dto->isWindSpeed10m())
-            ->andWhere('h.windSpeedUnit = :windSpeedUnit')
-            ->setParameter('windSpeedUnit', $dto->getWindSpeedUnit());
-
-        if (null !== $dto->getCityName()) {
-            $qb->andWhere('h.cityName = :cityName')
-               ->setParameter('cityName', $dto->getCityName());
-        }
+            ->andWhere('h.hash = :hash')
+            ->setParameter('hash', $hash);
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }

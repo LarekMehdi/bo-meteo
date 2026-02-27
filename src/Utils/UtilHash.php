@@ -13,7 +13,6 @@ final class UtilHash
             $user->getId(),
             $dto->getLatitude(),
             $dto->getLongitude(),
-            $dto->getCityName() ?? '',
             $dto->isHourly() ? '1' : '0',
             $dto->isWeatherCode() ? '1' : '0',
             $dto->isWindSpeed10m() ? '1' : '0',
