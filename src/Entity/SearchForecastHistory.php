@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Dto\Inputs\ForecastFilterDto;
 use App\Repository\SearchForecastHistoryRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -41,6 +42,9 @@ class SearchForecastHistory
     #[ORM\Column]
     private string $windSpeedUnit;
 
+    #[ORM\Column(length: 32, unique: true, nullable: false)]
+    public string $hash;
+
     public function __construct(
         User $user,
         float $latitude,
@@ -49,6 +53,7 @@ class SearchForecastHistory
         bool $weatherCode = true,
         bool $windSpeed10m = true,
         string $windSpeedUnit = 'kmh',
+        string $hash,
     ) {
         $this->user = $user;
         $this->latitude = $latitude;
@@ -58,6 +63,21 @@ class SearchForecastHistory
         $this->windSpeed10m = $windSpeed10m;
         $this->windSpeedUnit = $windSpeedUnit;
         $this->createdAt = new \DateTimeImmutable();
+        $this->hash = $hash;
+    }
+
+    public static function fromFilterDto(User $user, ForecastFilterDto $dto, string $hash): self
+    {
+        return new self(
+            $user,
+            $dto->getLatitude(),
+            $dto->getLongitude(),
+            $dto->isHourly(),
+            $dto->isWeatherCode(),
+            $dto->isWindSpeed10m(),
+            $dto->getWindSpeedUnit(),
+            $hash
+        );
     }
 
     public function getId(): ?int
@@ -162,6 +182,18 @@ class SearchForecastHistory
     public function setWindSpeedUnit(string $windSpeedUnit): static
     {
         $this->windSpeedUnit = $windSpeedUnit;
+
+        return $this;
+    }
+
+    public function getHash(): string
+    {
+        return $this->hash;
+    }
+
+    public function setHash(string $hash): static
+    {
+        $this->hash = $hash;
 
         return $this;
     }
