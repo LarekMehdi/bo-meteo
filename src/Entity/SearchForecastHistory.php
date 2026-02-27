@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Dto\Inputs\ForecastFilterDto;
 use App\Repository\SearchForecastHistoryRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -63,6 +64,20 @@ class SearchForecastHistory
         $this->windSpeedUnit = $windSpeedUnit;
         $this->createdAt = new \DateTimeImmutable();
         $this->hash = $hash;
+    }
+
+    public static function fromFilterDto(User $user, ForecastFilterDto $dto, string $hash): self
+    {
+        return new self(
+            $user,
+            $dto->getLatitude(),
+            $dto->getLongitude(),
+            $dto->isHourly(),
+            $dto->isWeatherCode(),
+            $dto->isWindSpeed10m(),
+            $dto->getWindSpeedUnit(),
+            $hash
+        );
     }
 
     public function getId(): ?int

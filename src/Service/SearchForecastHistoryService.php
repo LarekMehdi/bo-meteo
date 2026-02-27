@@ -44,16 +44,7 @@ final class SearchForecastHistoryService
             throw new PreconditionFailedException('An identical search already exists');
         }
 
-        $history = new SearchForecastHistory(
-            user: $user,
-            latitude: $dto->getLatitude(),
-            longitude: $dto->getLongitude(),
-            hourly: $dto->isHourly(),
-            weatherCode: $dto->isWeatherCode(),
-            windSpeed10m: $dto->isWindSpeed10m(),
-            windSpeedUnit: $dto->getWindSpeedUnit(),
-            hash: $hash,
-        );
+        $history = SearchForecastHistory::fromFilterDto($user, $dto, $hash);
 
         $history->setCityName($dto->getCityName());
 
