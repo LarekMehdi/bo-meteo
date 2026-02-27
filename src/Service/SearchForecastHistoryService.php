@@ -42,7 +42,7 @@ final class SearchForecastHistoryService
             throw new PreconditionFailedException('An identical search already exists');
         }
 
-        $hash = UtilHash::generateHashForHistory($dto);
+        $hash = UtilHash::generateHashForHistory($user, $dto);
 
         $history = new SearchForecastHistory(
             user: $user,

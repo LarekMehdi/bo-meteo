@@ -3,12 +3,14 @@
 namespace App\Utils;
 
 use App\Dto\Inputs\ForecastFilterDto;
+use App\Entity\User;
 
 final class UtilHash
 {
-    public static function generateHashForHistory(ForecastFilterDto $dto): string
+    public static function generateHashForHistory(User $user, ForecastFilterDto $dto): string
     {
         return md5(implode(',', [
+            $user->getId(),
             $dto->getLatitude(),
             $dto->getLongitude(),
             $dto->getCityName() ?? '',
